@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-xs-12 col-sm-6">
+		<div id="detail_carousel" class="carousel slide" data-ride="carousel">
+		  <ol class="carousel-indicators">
+		  	{% for image in images %}
+		    <li data-target="#detail_carousel" data-slide-to="{{forloop.counter0}}" {% if forloop.counter0 = 0 %} class="active" {% endif %}></li>
+		  	{% endfor %}
+		  </ol>
+
+		  <div class="carousel-inner" role="listbox">
+		  	{% for image in images %}
+		  		<div class="item  {% if forloop.counter = 1%} active{% endif %}">
+		  			<p></p>
+		  			<img src="{{image.url}}"/>
+		  		</div>
+		  	{% endfor %}
+		  </div>
+
+		  <a class="left carousel-control" href="#detail_carousel" role="button" data-slide="prev">
+		    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+		    <span class="sr-only">Previous</span>
+		  </a>
+		  <a class="right carousel-control" href="#detail_carousel" role="button" data-slide="next">
+		    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+		    <span class="sr-only">Next</span>
+		  </a>
+		</div>
+	</div>
+	<div class="col-xs-12 col-sm-6">
+		<div class="row">
+			<p>{{item.brand}}</p>
+			<p>{{item.get_categories}}</p>
+			<p>{{item.item_name}}</p>
+			<p>{{item.item_desc}}</p>
+			<p>정가 : {{item.custom_price}} 원</p>
+			<p>판매가 : {{item.price}} 원</p>
+		</div>
+		<div class="row">
+			<form target="{% url 'cart_update' %}">
+			{% for option in item.get_options %}
+			<div>
+				<input id="item_id" name="item_id" value="{{item.item_id}}" />
+				<input id="option_id" name="option_id" value="{{option.option_id}}" />
+				<p><b>{{ option.option_name }}</b> : 옵션가격 : + {{ option.option_price }}, <strike>{{ option.option_custom_price }}</strike>재고:{{option.option_stock}}</p>
+				<div class="input-group col-xs-3">
+				  <div class="input-group-btn">
+				    <button class="btn btn-default option_plus">+</button>
+				  </div>
+				  <input type="text" class="form-control" id="quantity" name="quantity" value = "0">
+				  <div class="input-group-btn">
+				    <button class="btn btn-default option_minus">-</button>
+				  </div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		</form>
+		<div class="row">
+			<a class="btn btn-primary" type="submit">구매하기</a>
+			<a class="btn btn-primary" type="submit">장바구니</a>
+		</div>
+	</div>
+</div>
+
+<script>
+$(function() {
+	    $('.option_plus').click(function(e){
+        stockInput = $(this).parent().next();
+        var currentVal = parseInt(stockInput.val());
+        var next = currentVal+1;
+        stockInput.val(next);
+    });
+	    $('.option_minus').click(function(e){
+        stockInput = $(this).parent().prev();
+        var currentVal = parseInt(stockInput.val());
+        var next = currentVal-1;
+        if(currentVal==0){
+        	next = 0;
+        }
+        stockInput.val(next);
+    });
+});
+</script>
+
+<div>
+	<div class="btn-group btn-group-justified" role="group" aria-label="pg-anchor">
+	  <div class="btn-group" role="group">
+	    <button type="button" id="pnav1" class="btn btn-default active" onclick="pnav1_click();">정보</button>
+	  </div>
+	  <div class="btn-group" role="group">
+	    <button type="button" id="pnav2" class="btn btn-default" onclick="pnav2_click();">배송</button>
+	  </div>
+	  <div class="btn-group" role="group">
+	    <button type="button" id="pnav3" class="btn btn-default" onclick="pnav3_click();">문의<span class="badge">0</span></button>
+	  </div>
+	  <div class="btn-group" role="group">
+	    <button type="button" id="pnav4" class="btn btn-default" onclick="pnav4_click();">후기<span class="badge">0</span></button>
+	  </div>
+	</div>
+</div>
+
+<script>
+function pnav1_click() {
+	$("#product_info").show();
+	$("#product_drv").hide();
+	$("#product_qna").hide();
+	$("#product_review").hide();
+	$("#pnav1").addClass("active");
+	$("#pnav2").removeClass("active");
+	$("#pnav3").removeClass("active");
+	$("#pnav4").removeClass("active");	
+}
+function pnav2_click() {
+	$("#product_info").hide();
+	$("#product_drv").show();
+	$("#product_qna").hide();
+	$("#product_review").hide();
+	$("#pnav1").removeClass("active");
+	$("#pnav2").addClass("active");
+	$("#pnav3").removeClass("active");
+	$("#pnav4").removeClass("active");	
+}
+function pnav3_click() {
+	$("#product_info").hide();
+	$("#product_drv").hide();
+	$("#product_qna").show();
+	$("#product_review").hide();
+	$("#pnav1").removeClass("active");
+	$("#pnav2").removeClass("active");
+	$("#pnav3").addClass("active");
+	$("#pnav4").removeClass("active");	
+}
+function pnav4_click() {
+	$("#product_info").hide();
+	$("#product_drv").hide();
+	$("#product_qna").hide();
+	$("#product_review").show();
+	$("#pnav1").removeClass("active");
+	$("#pnav2").removeClass("active");
+	$("#pnav3").removeClass("active");
+	$("#pnav4").addClass("active");	
+}
+</script>
+
+<div id="product_info">
+{{item.detail|safe}}
+</div>
+<div id="product_drv">
+배송정보
+</div>
+<div id="product_qna">
+큐엔에이
+</div>
+<div id="product_review">
+리뷰
+</div>
+
+{% endblock %}

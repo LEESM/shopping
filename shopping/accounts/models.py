@@ -1,3 +1,9 @@
 from django.db import models
+from django.conf import settings
 
-# Create your models here.
+class Profile(models.Model):
+	user = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,)
+	point = models.IntegerField(default=0)
+	city = models.CharField(max_length=30, default='')
+	address = models.CharField(max_length=300, default='')
+	phone = models.CharField(max_length=30, default='')
