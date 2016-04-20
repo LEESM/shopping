@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from .models import Category, Brand, Item, ItemOption
+from django.shortcuts import render, redirect
+from item.models import Category, Brand, Item, ItemOption, ItemQna, ItemReview
+from item.forms import ItemReviewForm
 
 def index(request):
 	items = Item.objects.all()
@@ -29,6 +30,50 @@ def detail(request):
 		images.append(item.image8)
 	if(item.image9!=''):
 		images.append(item.image9)
-	context={'item':item, 'images':images}
+	item_qnas = ItemQna.objects.filter(item=item)
+	review_write = ItemReviewForm()
+	item_reviews = ItemReview.objects.filter(item=item)
+	context={
+		'item':item, 
+		'images':images, 
+		'item_qnas':item_qnas, 
+		'review_write':review_write, 
+		'item_reviews':item_reviews,
+		}
 	return render(request,"item/detail.html", context)
 
+def qna_update(request):
+	raw = request.POST.get('question')
+	lines = raw.split('\n')
+	question = '<p>'+'</p><p>'.join(lines)+'</p>'
+	raw_secret = request.POST.get('secret')
+	if raw_secret:
+		secret = True
+	else:
+		secret = False
+	newqna=ItemQna(
+		user=request.user, 
+		secret=secret,
+		item=Item.objects.get(item_id=request.POST.get('item_id')), 
+		question=question,
+		)
+	newqna.save()
+	return redirect('/item/detail/?item_id='+newqna.item.item_id)
+
+def review_write(request):
+	item_id=request.GET.get('item_id')
+	item = Item.objects.get(item_id=item_id)
+	itemreviewform = ItemReviewForm()
+	context={'item':item,'itemreviewform':itemreviewform}
+	return render(request,"item/review_write.html", context)
+
+def review_update(request):
+	itemreviewform = ItemReviewForm(request.POST)
+	newreview = ItemReview(
+		user=request.user,
+		item=Item.objects.get(item_id=request.POST.get('item_id')), 
+		score=request.POST.get('score'),
+		comment=request.POST.get('comment')
+		)
+	newreview.save()
+	return redirect('/item/detail/?item_id='+newreview.item.item_id)

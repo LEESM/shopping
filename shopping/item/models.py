@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 import os
 
 class Category(models.Model):
@@ -22,18 +23,19 @@ class Item(models.Model):
 	item_desc = models.CharField(max_length=100,blank=True)
 	price = models.IntegerField(default=0)
 	custom_price = models.IntegerField(default=0)
-	categories = models.ManyToManyField(Category,blank=True, null=True)
+	categories = models.ManyToManyField(Category,blank=True)
 	brand = models.ForeignKey(Brand,blank=True, null=True)
 	image0 = models.ImageField(blank=True, upload_to=get_image_path)
-	image1 = models.ImageField(blank=True)
-	image2 = models.ImageField(blank=True)
-	image3 = models.ImageField(blank=True)
-	image4 = models.ImageField(blank=True)
-	image5 = models.ImageField(blank=True)
-	image6 = models.ImageField(blank=True)
-	image7 = models.ImageField(blank=True)
-	image8 = models.ImageField(blank=True)
-	image9 = models.ImageField(blank=True)
+	image1 = models.ImageField(blank=True, upload_to=get_image_path)
+	image2 = models.ImageField(blank=True, upload_to=get_image_path)
+	image3 = models.ImageField(blank=True, upload_to=get_image_path)
+	image4 = models.ImageField(blank=True, upload_to=get_image_path)
+	image5 = models.ImageField(blank=True, upload_to=get_image_path)
+	image6 = models.ImageField(blank=True, upload_to=get_image_path)
+	image7 = models.ImageField(blank=True, upload_to=get_image_path)
+	image8 = models.ImageField(blank=True, upload_to=get_image_path)
+	image9 = models.ImageField(blank=True, upload_to=get_image_path)
+	delivery = models.TextField(blank=True)
 	detail = models.TextField(blank=True)
 	def __str__(self):
 		return self.item_name
@@ -58,3 +60,18 @@ class ItemOption(models.Model):
 	option_stock = models.IntegerField(default=0)
 	def __str__(self):
 		return self.option_name
+
+class ItemQna(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	item = models.ForeignKey(Item)
+	secret = models.BooleanField()
+	question = models.TextField(blank=True)
+	answer = models.TextField(blank=True)
+	qna_time = models.DateTimeField(auto_now_add=True)
+
+class ItemReview(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	item = models.ForeignKey(Item)
+	score = models.IntegerField(default=10)
+	comment = models.TextField(blank=True)
+	review_time = models.DateTimeField(auto_now_add=True)

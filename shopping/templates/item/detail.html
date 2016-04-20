@@ -39,29 +39,29 @@
 			<p>판매가 : {{item.price}} 원</p>
 		</div>
 		<div class="row">
-			<form target="{% url 'cart_update' %}">
+			<form method="POST" action="{% url 'cart_update' %}">
+			{%csrf_token%}
 			{% for option in item.get_options %}
 			<div>
-				<input id="item_id" name="item_id" value="{{item.item_id}}" />
-				<input id="option_id" name="option_id" value="{{option.option_id}}" />
+				<input id="item_id" name="item_id" value="{{item.item_id}}" style="display:none;" />
+				<input id="option_id" name="option_id" value="{{option.option_id}}" style="display:none;" />
 				<p><b>{{ option.option_name }}</b> : 옵션가격 : + {{ option.option_price }}, <strike>{{ option.option_custom_price }}</strike>재고:{{option.option_stock}}</p>
 				<div class="input-group col-xs-3">
 				  <div class="input-group-btn">
-				    <button class="btn btn-default option_plus">+</button>
+				    <a class="btn btn-default option_plus">+</a>
 				  </div>
 				  <input type="text" class="form-control" id="quantity" name="quantity" value = "0">
 				  <div class="input-group-btn">
-				    <button class="btn btn-default option_minus">-</button>
+				    <a class="btn btn-default option_minus">-</a>
 				  </div>
 				</div>
 			</div>
 			{% endfor %}
 		</div>
-		</form>
 		<div class="row">
-			<a class="btn btn-primary" type="submit">구매하기</a>
-			<a class="btn btn-primary" type="submit">장바구니</a>
+			<button class="btn btn-primary" type="submit">장바구니</button>
 		</div>
+		</form>
 	</div>
 </div>
 
@@ -82,6 +82,9 @@ $(function() {
         }
         stockInput.val(next);
     });
+	$('.summernote').summernote({
+  airMode: true
+  });
 });
 </script>
 
@@ -94,10 +97,10 @@ $(function() {
 	    <button type="button" id="pnav2" class="btn btn-default" onclick="pnav2_click();">배송</button>
 	  </div>
 	  <div class="btn-group" role="group">
-	    <button type="button" id="pnav3" class="btn btn-default" onclick="pnav3_click();">문의<span class="badge">0</span></button>
+	    <button type="button" id="pnav3" class="btn btn-default" onclick="pnav3_click();">문의<span class="badge">{{ item_qnas|length }}</span></button>
 	  </div>
 	  <div class="btn-group" role="group">
-	    <button type="button" id="pnav4" class="btn btn-default" onclick="pnav4_click();">후기<span class="badge">0</span></button>
+	    <button type="button" id="pnav4" class="btn btn-default" onclick="pnav4_click();">후기<span class="badge">{{ item_reviews|length }}</span></button>
 	  </div>
 	</div>
 </div>
@@ -141,21 +144,62 @@ function pnav4_click() {
 	$("#pnav1").removeClass("active");
 	$("#pnav2").removeClass("active");
 	$("#pnav3").removeClass("active");
-	$("#pnav4").addClass("active");	
+	$("#pnav4").addClass("active");
 }
 </script>
 
 <div id="product_info">
 {{item.detail|safe}}
 </div>
-<div id="product_drv">
-배송정보
+<div id="product_drv" style="display:none;">
+{{item.delivery|safe}}
 </div>
-<div id="product_qna">
-큐엔에이
+<div id="product_qna" style="display:none;">
+{% if request.user.is_authenticated %}
+<form method="post" action="{% url 'qna_update' %}">
+{% csrf_token %}
+	<input id="item_id" name="item_id" value="{{item.item_id}}" style="display:none;" />
+	<textarea class="form-control" rows="3"  placeholder="문의내용을 적어주세요." id="question" name="question"  align="left"></textarea>
+	<div class="pull-right">
+		<label><span class="glyphicon glyphicon-lock"></span></label>
+		<input type="checkbox" id="secret" name="secret"/>
+		<button class="btn btn-primary" type="submit">문의하기</button>
+	</div>
+</form>
+<div class="clearfix"></div>
+<hr/>
+{% else %}
+<p>로그인하면 문의를 작성하실 수 있습니다.</p>
+{% endif %}
+{% for qna in item_qnas %}
+	<p>{{ qna.user }} |	{{ qna.qna_time }}</p>
+	{% if qna.secret %}
+		{% if qna.user.id = request.user.id %}
+			{{ qna.question|safe }}
+			{{ qna.answer|safe }}
+		{% else %}
+			<p>비밀글입니다.</p>
+		{% endif %}
+	{% else %}
+		{{ qna.question|safe }}
+		{{ qna.answer|safe }}
+	{% endif %}
+	<hr/>
+{% endfor %}
 </div>
-<div id="product_review">
-리뷰
+
+<div id="product_review" style="display:none;">
+	<div class="jumbotron text-center">
+	  <p>많이 사세요.</p>
+		<a class="btn btn-primary" href="{% url 'review_write' %}?item_id={{item.item_id}}">후기쓰러가기</a>
+	</div>
+
+
+{% for review in item_reviews %}
+	<p>{{ review.user }} | {{ review.review_time }} | {{ review.score }}</p>
+	<p>	{{ review.comment|safe }}</p>
+	<hr/>
+{% endfor %}
 </div>
 
 {% endblock %}

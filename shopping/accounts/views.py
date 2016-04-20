@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login as login_user
 from django.contrib.auth import logout as logout_user
 from django.contrib.auth.views import login as default_login_view
+from django.contrib.auth.decorators import login_required
 
 def login(request):
 	return default_login_view(request, template_name="accounts/login.html")
@@ -16,6 +17,7 @@ def logout(request):
 	logout_user(request)
 	return redirect("index")
 
+@login_required
 def mypage(request):
 	message='get method'
 	if request.method == "POST":
@@ -34,6 +36,12 @@ def mypage(request):
 		else:
 			message = mypageform.errors
 	user=User.objects.get(id=request.user.id)
+	#프로필 있는지 확인 없으면생성
+	try:
+		profile=Profile.objects.get(user=request.user)
+	except:
+		new_profile=Profile(user=request.user)
+		new_profile.save()
 	mypageform = MypageForm({'first_name':request.user.first_name ,'city':user.profile.city,'address':user.profile.address, 'phone':user.profile.phone})
 	context={'message':message,'point':user.profile.point, 'mypageform':mypageform}
 	return render(request,"accounts/mypage.html", context)
