@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block content %}
+<div class="container">
 <div class="row">
 	<div class="col-xs-12 col-sm-6">
 		<div id="detail_carousel" class="carousel slide" data-ride="carousel">
@@ -14,7 +16,7 @@
 		  	{% for image in images %}
 		  		<div class="item  {% if forloop.counter = 1%} active{% endif %}">
 		  			<p></p>
-		  			<img src="{{image.url}}"/>
+		  			<img class="item_slide" src="{{image.url}}"/>
 		  		</div>
 		  	{% endfor %}
 		  </div>
@@ -30,36 +32,48 @@
 		</div>
 	</div>
 	<div class="col-xs-12 col-sm-6">
-		<div class="row">
-			<p>{{item.brand}}</p>
-			<p>{{item.get_categories}}</p>
-			<p>{{item.item_name}}</p>
-			<p>{{item.item_desc}}</p>
-			<p>정가 : {{item.custom_price}} 원</p>
-			<p>판매가 : {{item.price}} 원</p>
+		<div class="">
+			<h2>{{item.item_name}}</h2>
+			<p class="gray">{{item.item_desc}}</p>
+			<br/>
+			<p>{{item.brand}} - {{item.get_categories}}</p>
+			<p><strike>{{item.custom_price|intcomma}}원</strike><span id="item_price"> {{item.price|intcomma}}원</span></p>
 		</div>
 		<div class="row">
 			<form method="POST" action="{% url 'cart_update' %}">
+			<table id="option_table" class="table table-striped">
+				<thead>
+					<tr>
+						<th>옵션</th>
+						<th>수량</th>
+					</tr>
+				</thead>
+				<tbody>
 			{%csrf_token%}
 			{% for option in item.get_options %}
-			<div>
-				<input id="item_id" name="item_id" value="{{item.item_id}}" style="display:none;" />
-				<input id="option_id" name="option_id" value="{{option.option_id}}" style="display:none;" />
-				<p><b>{{ option.option_name }}</b> : 옵션가격 : + {{ option.option_price }}, <strike>{{ option.option_custom_price }}</strike>재고:{{option.option_stock}}</p>
-				<div class="input-group col-xs-3">
-				  <div class="input-group-btn">
-				    <a class="btn btn-default option_plus">+</a>
-				  </div>
-				  <input type="text" class="form-control" id="quantity" name="quantity" value = "0">
-				  <div class="input-group-btn">
-				    <a class="btn btn-default option_minus">-</a>
-				  </div>
-				</div>
-			</div>
+					<tr>
+						<input id="item_id" name="item_id" value="{{item.item_id}}" style="display:none;" />
+						<input id="option_id" name="option_id" value="{{option.option_id}}" style="display:none;" />
+						<td class="option_td">{{ option.option_name }}<span class="gray"> ( + {{ option.option_price|intcomma }}원)</span></td>
+						<td>
+							<div class="input-group" id="quantity_div">
+							  <div class="input-group-btn">
+							    <a class="btn btn-default option_plus">+</a>
+							  </div>
+							  <input type="text" class="form-control" id="quantity" name="quantity" value = "0">
+							  <div class="input-group-btn">
+							    <a class="btn btn-default option_minus">-</a>
+							  </div>
+							</div>
+						</td>
+					</tr>
 			{% endfor %}
+				</tbody>
+			</table>
 		</div>
 		<div class="row">
-			<button class="btn btn-primary" type="submit">장바구니</button>
+			<button class="btn btn-lg btn-danger" type="submit">바로구매</button>
+			<button class="btn btn-lg btn-primary" type="submit">장바구니</button>
 		</div>
 		</form>
 	</div>
@@ -201,5 +215,5 @@ function pnav4_click() {
 	<hr/>
 {% endfor %}
 </div>
-
+</div>
 {% endblock %}

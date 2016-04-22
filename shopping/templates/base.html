@@ -9,13 +9,12 @@
     <title>{{ title }}</title>
     <link href='https://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}" type="text/css"/>
 
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" type="text/css"/>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script   src="https://code.jquery.com/jquery-1.12.3.min.js"   integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ="   crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -24,7 +23,7 @@
     <![endif]-->
   </head>
   <body>
-
+  <div id="nav_div">
     <nav class="navbar navbar-default">
       <div class="container-fluid container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -64,17 +63,37 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-
-
-{% if message != None %}
-<div class="message">
-  <div class="alert alert-info" role="alert">
-    <p>{{ message }}</p>
   </div>
-</div>
-{% endif %}
-<div class="container">
-  {% block content %}{% endblock %}
-</div>
+
+  {% if message != None %}
+  <div class="message">
+    <div class="alert alert-info" role="alert">
+      <p>{{ message }}</p>
+    </div>
+  </div>
+  {% endif %}
+  <div id="main_div">
+    {% block content %}{% endblock %}
+  </div>
+
+  <div id="footer_div">
+    <div class="container">
+      <div class="col-xs-12 col-sm-6">
+        <h4>고객센터 이용안내</h4>
+        <h2>02-711-9567</h2>
+        <p class="gray">운영시간 09:30 ~ 18:00</p>
+        <p class="gray">점심시간 12:00 ~ 13:00</p>
+        <p class="gray">*토, 일, 공휴일 휴무</p>
+        <p class="gray">fast0522@gmail.com</p>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <h4>회사정보</h4>
+        <p><span class="gray">회사명</span> 금수 <span class="gray">대표</span> 이상민</p>
+        <p><span class="gray">사업자 등록번호</span> 187-10-00306</p>
+        <p><span class="gray">주소</span> 서울 관악구 관악로 1, 서울대 연구공원 본관 327호</p>
+
+      </div>
+    </div>
+  </div>
   </body>
 </html>
