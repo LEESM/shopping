@@ -2,9 +2,9 @@
 {% load humanize %}
 
 {% block content %}
-<div class="container">
-<div class="row">
-	<div class="col-xs-12 col-sm-6">
+<div id="detail_div" class="container">
+<div id="detail_inner" class="row">
+	<div id="detail_left" class="col-xs-12 col-sm-6">
 		<div id="detail_carousel" class="carousel slide" data-ride="carousel">
 		  <ol class="carousel-indicators">
 		  	{% for image in images %}
@@ -31,7 +31,7 @@
 		  </a>
 		</div>
 	</div>
-	<div class="col-xs-12 col-sm-6">
+	<div id="detail_right" class="col-xs-12 col-sm-6">
 		<div class="">
 			<h2>{{item.item_name}}</h2>
 			<p class="gray">{{item.item_desc}}</p>
@@ -39,7 +39,7 @@
 			<p>{{item.brand}} - {{item.get_categories}}</p>
 			<p><strike>{{item.custom_price|intcomma}}원</strike><span id="item_price"> {{item.price|intcomma}}원</span></p>
 		</div>
-		<div class="row">
+		<div class="">
 			<form method="POST" action="{% url 'cart_update' %}">
 			<table id="option_table" class="table table-striped">
 				<thead>
@@ -71,7 +71,7 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="row">
+		<div class="">
 			<button class="btn btn-lg btn-danger" type="submit">바로구매</button>
 			<button class="btn btn-lg btn-primary" type="submit">장바구니</button>
 		</div>
@@ -188,7 +188,7 @@ function pnav4_click() {
 {% for qna in item_qnas %}
 	<p>{{ qna.user }} |	{{ qna.qna_time }}</p>
 	{% if qna.secret %}
-		{% if qna.user.id = request.user.id %}
+		{% if qna.user.id = request.user.first_name %}
 			{{ qna.question|safe }}
 			{{ qna.answer|safe }}
 		{% else %}
@@ -210,7 +210,7 @@ function pnav4_click() {
 
 
 {% for review in item_reviews %}
-	<p>{{ review.user }} | {{ review.review_time }} | {{ review.score }}</p>
+	<p>{{ review.user.first_name }} | {{ review.review_time }} | {{ review.score }}</p>
 	<p>	{{ review.comment|safe }}</p>
 	<hr/>
 {% endfor %}

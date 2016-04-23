@@ -11,6 +11,7 @@ width:100%;
 }
 #main_div{
 	padding-top:50px;
+	padding-bottom:50px;
 }
 .main_img{
 	width:100%;
@@ -45,4 +46,11 @@ width:100%;
 .item_card{
 	margin-top:30px;
 	margin-bottom:30px;
+}
+#detail_div{
+	padding-top:30px;
+	padding-bottom:30px;
+}
+#detail_inner{
+	padding-bottom:30px;
 }
