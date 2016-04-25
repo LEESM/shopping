@@ -7,3 +7,8 @@ class Profile(models.Model):
 	city = models.CharField(max_length=30, default='')
 	address = models.CharField(max_length=300, default='')
 	phone = models.CharField(max_length=30, default='')
+	ads_agree = models.BooleanField(default = False)
+
+class Texts(models.Model):
+	name = models.CharField(max_length=50)
+	contents = models.TextField(blank = True)

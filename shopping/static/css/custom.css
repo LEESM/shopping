@@ -35,13 +35,10 @@ width:100%;
 	font-weight:bold;
 }
 #quantity_div{
-	max-width:110px;
+	width:110px;
 }
 #quantity{
 	text-align:center;
-}
-#option_table .option_td{
-	vertical-align: middle;
 }
 .item_card{
 	margin-top:30px;
@@ -53,4 +50,15 @@ width:100%;
 }
 #detail_inner{
 	padding-bottom:30px;
+}
+#cart_thead th, td{
+	text-align:center;
+}
+#cart_tbody td{
+	vertical-align: middle;
+
+}
+#option_table .option_td{
+	vertical-align: middle;
+	text-align:left;	
 }

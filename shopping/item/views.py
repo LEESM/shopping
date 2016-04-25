@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from item.models import Category, Brand, Item, ItemOption, ItemQna, ItemReview
 from item.forms import ItemReviewForm
+from django.contrib.auth.decorators import login_required
 
 def index(request):
 	items = Item.objects.all()
@@ -42,6 +43,7 @@ def detail(request):
 		}
 	return render(request,"item/detail.html", context)
 
+@login_required
 def qna_update(request):
 	raw = request.POST.get('question')
 	lines = raw.split('\n')
@@ -60,6 +62,7 @@ def qna_update(request):
 	newqna.save()
 	return redirect('/item/detail/?item_id='+newqna.item.item_id)
 
+@login_required
 def review_write(request):
 	item_id=request.GET.get('item_id')
 	item = Item.objects.get(item_id=item_id)
@@ -67,6 +70,7 @@ def review_write(request):
 	context={'item':item,'itemreviewform':itemreviewform}
 	return render(request,"item/review_write.html", context)
 
+@login_required
 def review_update(request):
 	itemreviewform = ItemReviewForm(request.POST)
 	newreview = ItemReview(

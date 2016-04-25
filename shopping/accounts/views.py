@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from accounts.forms import SignupForm, MypageForm
-from accounts.models import Profile
+from accounts.models import Profile, Texts
 
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -47,6 +47,8 @@ def mypage(request):
 	return render(request,"accounts/mypage.html", context)
 
 def signup(request):
+	regist_terms=Texts.objects.get(name="regist_terms")
+	privacy_info_terms=Texts.objects.get(name="privacy_info_terms")
 	if request.method=="POST":
 		userform = SignupForm(request.POST)
 		if userform.is_valid():
@@ -58,11 +60,15 @@ def signup(request):
 			return HttpResponseRedirect(reverse("signup_ok"))	
 		return render(request, "accounts/signup.html", {
 			'userform': userform,
-			'message':'에러발생',
+			'message':'입력정보를 정확히 확인해주세요.',
+			'regist_terms':regist_terms.contents,
+			'privacy_info_terms':privacy_info_terms.contents,
 		})
 	elif request.method=="GET":
 		userform = SignupForm()
 		return render(request, "accounts/signup.html", {
 			'userform':userform,
 			'message':'첫 화면',
+			'regist_terms':regist_terms.contents,
+			'privacy_info_terms':privacy_info_terms.contents,
 		})

@@ -93,3 +93,14 @@ def order_info(request):
 		'point_made':point_made,
 		'message':'주문 정보 입력',
 	})
+
+@login_required
+def order_update(request):
+	new_order = Order(
+		order_id=request.POST.get('order_id'),
+		cart_id=request.POST.get('cart_id'),
+		item_price=request.POST.get('item_price'),
+		delivery_price=request.POST.get('delivery_price'),
+		total_price=request.POST.get('total_price'),
+		pay_price=request.POST.get('order_id'),
+		)

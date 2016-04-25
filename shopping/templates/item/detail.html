@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load staticfiles %}
+{% load app_filters %}
 
 {% block content %}
 <div id="detail_div" class="container">
@@ -72,7 +74,7 @@
 			</table>
 		</div>
 		<div class="">
-			<button class="btn btn-lg btn-danger" type="submit">바로구매</button>
+			<button class="btn btn-lg btn-primary" type="submit">바로구매</button>
 			<button class="btn btn-lg btn-primary" type="submit">장바구니</button>
 		</div>
 		</form>
@@ -170,50 +172,72 @@ function pnav4_click() {
 </div>
 <div id="product_qna" style="display:none;">
 {% if request.user.is_authenticated %}
-<form method="post" action="{% url 'qna_update' %}">
-{% csrf_token %}
-	<input id="item_id" name="item_id" value="{{item.item_id}}" style="display:none;" />
-	<textarea class="form-control" rows="3"  placeholder="문의내용을 적어주세요." id="question" name="question"  align="left"></textarea>
-	<div class="pull-right">
-		<label><span class="glyphicon glyphicon-lock"></span></label>
-		<input type="checkbox" id="secret" name="secret"/>
-		<button class="btn btn-primary" type="submit">문의하기</button>
-	</div>
-</form>
-<div class="clearfix"></div>
-<hr/>
+	<form method="post" action="{% url 'qna_update' %}">
+	{% csrf_token %}
+		<input id="item_id" name="item_id" value="{{item.item_id}}" style="display:none;" />
+		<textarea class="form-control" rows="3"  placeholder="문의내용을 적어주세요." id="question" name="question"  align="left"></textarea>
+		<div class="pull-right">
+			<label><span class="glyphicon glyphicon-lock"></span></label>
+			<input type="checkbox" id="secret" name="secret"/>
+			<button class="btn btn-primary" type="submit">문의하기</button>
+		</div>
+	</form>
+	<div class="clearfix"></div>
+	<hr/>
 {% else %}
-<p>로그인하면 문의를 작성하실 수 있습니다.</p>
+	<div class="jumbotron text-center">
+	  <p>로그인하시면 문의를 작성하실 수 있습니다.</p>
+		<a class="btn btn-info	" href="{% url 'login' %}">로그인</a>
+		<a class="btn btn-info" href="{% url 'signup' %}">회원가입</a>
+	</div>
+	<hr/>
 {% endif %}
 {% for qna in item_qnas %}
-	<p>{{ qna.user }} |	{{ qna.qna_time }}</p>
+	<p>{{ qna.user.first_name }}님 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gray">{{ qna.qna_time|date:"Y-m-d" }}</span></p>
 	{% if qna.secret %}
-		{% if qna.user.id = request.user.first_name %}
-			{{ qna.question|safe }}
-			{{ qna.answer|safe }}
+		{% if qna.user.id = request.user.id or qna.user == 'admin' %}
+			<div class="col-xs-12 col-sm-6">
+			<p><span class="glyphicon glyphicon-question-sign"></span></p>
+				{{ qna.question|safe }}
+			</div>
+			<div class="col-xs-12 col-sm-6">
+			<p><span class="glyphicon glyphicon-ok"></span></p>
+				{{ qna.answer|safe }}
+			</div>
+			<div class="clearfix"></div>
+			<hr/>
 		{% else %}
 			<p>비밀글입니다.</p>
+			<hr/>
 		{% endif %}
 	{% else %}
-		{{ qna.question|safe }}
-		{{ qna.answer|safe }}
+		<div class="col-xs-12 col-sm-6">
+			<p><span class="glyphicon glyphicon-question-sign"></span></p>
+			{{ qna.question|safe }}
+		</div>
+		<div class="col-xs-12 col-sm-6">
+			<p><span class="glyphicon glyphicon-ok"></span></p>
+			{{ qna.answer|safe }}
+		</div>
+		<div class="clearfix"></div>
+		<hr/>
 	{% endif %}
-	<hr/>
 {% endfor %}
 </div>
 
 <div id="product_review" style="display:none;">
 	<div class="jumbotron text-center">
-	  <p>많이 사세요.</p>
-		<a class="btn btn-primary" href="{% url 'review_write' %}?item_id={{item.item_id}}">후기쓰러가기</a>
+	  <p>후기를 작성해주시면 구매시 현금과 1:1 사용이 가능한 1000포인트를 드립니다.</p>
+		<a class="btn btn-info" href="{% url 'review_write' %}?item_id={{item.item_id}}">후기쓰러가기</a>
 	</div>
-
-
-{% for review in item_reviews %}
-	<p>{{ review.user.first_name }} | {{ review.review_time }} | {{ review.score }}</p>
-	<p>	{{ review.comment|safe }}</p>
 	<hr/>
-{% endfor %}
+
+	{% for review in item_reviews %}
+		<p>{{ review.user.first_name }}님 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="gray">{{ review.review_time|date:"Y-m-d" }}</span></p>
+		<p>{% for i in review.score|times %}<img src="{% static 'img/star.png' %}" />{% endfor %} </p>
+		<p>	{{ review.comment|safe }}</p>
+		<hr/>
+	{% endfor %}
 </div>
 </div>
 {% endblock %}

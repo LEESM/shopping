@@ -66,7 +66,7 @@ class ItemQna(models.Model):
 	item = models.ForeignKey(Item)
 	secret = models.BooleanField()
 	question = models.TextField(blank=True)
-	answer = models.TextField(blank=True)
+	answer = models.TextField(blank=True, default="<p>답변 전 입니다.</p>")
 	qna_time = models.DateTimeField(auto_now_add=True)
 
 class ItemReview(models.Model):
